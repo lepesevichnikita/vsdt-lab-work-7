@@ -1,0 +1,4 @@
+-I/home/nikital/Documents/projects/cpp/lab7/include
+-o
+/home/nikital/Documents/projects/cpp/lab7/include/moc_task1.cpp
+/home/nikital/Documents/projects/cpp/lab7/include/task1.h
