@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>Task1.qml</file>
         <file>Task2.qml</file>
+        <file>Task3.qml</file>
     </qresource>
 </RCC>

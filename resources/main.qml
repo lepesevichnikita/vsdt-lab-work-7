@@ -16,10 +16,7 @@ ApplicationWindow {
         }
         Task2 {
         }
-        Item {
-            Text {
-                text: qsTr("Третье задание")
-            }
+        Task3 {
         }
         Item {
             Text {
