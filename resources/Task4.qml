@@ -11,20 +11,73 @@ Page {
     antialiasing: true
     title: qsTr("Четвёртое задание")
     state: 'viewTrain'
+    StackView {
+        id: stackView
+        initialItem: trainsList
+        anchors.fill: parent
+        TrainForm {
+            id: editTrainForm
+            visible: false
+            property Train oldTrain
+            onSubmitClicked: {
+                if (train.isValid) {
+                    oldTrain.setFromObject(train)
+                    train.reset()
+                    stackView.pop()
+                }
+            }
+            onResetClicked: {
+                train.setFromObject(oldTrain)
+            }
+        }
+        TrainForm {
+            id: newTrainForm
+            visible: false
+            onSubmitClicked: {
+                if (train.isValid) {
+                    var newTrain = train.copyFromObject(train)
+                    train.reset()
+                    trains.append(newTrain)
+                    stackView.pop()
+                }
+            }
+            onResetClicked: {
+                train.reset()
+            }
+        }
+
+        ListView {
+            id: trainsList
+            model: trains
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            delegate: TrainItem {
+                onAboutClicked: {
+                    editTrainForm.oldTrain = train
+                    editTrainForm.train.setFromObject(train)
+                    editTrainForm.dirty = false
+                    stackView.push(editTrainForm)
+                }
+            }
+            ScrollBar.vertical: ScrollBar {
+                active: true
+            }
+        }
+    }
 
     header: RowLayout {
         width: parent.width
         RowLayout {
-            id: homeBlock
+            id: backButton
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             Button {
-                text: qsTr("Домой")
-                onClicked: root.state = "viewTrains"
+                text: qsTr("Назад")
+                onClicked: stackView.pop()
             }
         }
         RowLayout {
             id: mainHeader
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
             Button {
                 text: qsTr("Открыть файл")
                 onClicked: openFileDialog.open()
@@ -36,7 +89,7 @@ Page {
             Button {
                 id: addNewTrainButton
                 text: qsTr("Добавить новый поезд")
-                onClicked: root.state = "newTrain"
+                onClicked: stackView.push(newTrainForm)
             }
         }
     }
@@ -66,109 +119,29 @@ Page {
         }
     }
 
-    GridLayout {
-        anchors.fill: parent
-        ListView {
-            id: trainsList
-            model: trains
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            delegate: TrainItem {
-                onAboutClicked: {
-                    editTrainForm.oldTrain = train
-                    editTrainForm.train.setFromObject(train)
-                    root.state = "editTrain"
-                }
-            }
-            ScrollBar.vertical: ScrollBar {
-                active: true
-            }
-        }
-        TrainForm {
-            id: editTrainForm
-            visible: false
-            property Train oldTrain
-            onSubmitClicked: {
-                oldTrain.setFromObject(train)
-                train.reset()
-                root.state = "viewTrains"
-            }
-            onResetClicked: {
-                train.setFromObject(oldTrain)
-            }
-        }
-        TrainForm {
-            id: newTrainForm
-            visible: false
-            onSubmitClicked: {
-                if (train.isValid) {
-                    var newTrain = train.copyFromObject(train)
-                    train.reset()
-                    trains.append(newTrain)
-                    root.state = "viewTrains"
-                }
-            }
-            onResetClicked: {
-                train.reset()
-            }
-        }
-    }
     states: [
         State {
-            name: "editTrain"
+            name: "homePage"
+            when: stackView.depth == 1
             PropertyChanges {
-                target: editTrainForm
-                visible: true
-            }
-            PropertyChanges {
-                target: newTrainForm
+                target: backButton
                 visible: false
             }
             PropertyChanges {
                 target: mainHeader
-                visible: false
-            }
-            PropertyChanges {
-                target: trainsList
-                visible: false
+                visible: true
             }
         },
         State {
-            name: "newTrain"
+            name: "stacked"
+            when: stackView.depth > 1
             PropertyChanges {
-                target: editTrainForm
-                visible: false
-            }
-            PropertyChanges {
-                target: newTrainForm
+                target: backButton
                 visible: true
             }
             PropertyChanges {
                 target: mainHeader
                 visible: false
-            }
-            PropertyChanges {
-                target: trainsList
-                visible: false
-            }
-        },
-        State {
-            name: "viewTrains"
-            PropertyChanges {
-                target: editTrainForm
-                visible: false
-            }
-            PropertyChanges {
-                target: newTrainForm
-                visible: false
-            }
-            PropertyChanges {
-                target: mainHeader
-                visible: true
-            }
-            PropertyChanges {
-                target: trainsList
-                visible: true
             }
         }
     ]

@@ -6,43 +6,91 @@ import vsdt.lab.work 1.0
 
 GridLayout {
     id: root
+    anchors.fill: parent
+    columns: 2
 
     property Train train: Train {
     }
 
     property bool submited: false
     property bool reseted: false
+    property bool dirty: false
 
     signal submitClicked
     signal resetClicked
     signal changed
+    state: 'clear'
 
-    Connections {
-        target: resetButton
-        onClicked: {
-            reseted = true
-            submited = false
-            resetClicked()
+    states: [
+        State {
+            name: "dirty"
+            when: dirty
+            PropertyChanges {
+                target: resetButton
+                enabled: true
+            }
+            PropertyChanges {
+                target: submitButton
+                enabled: true
+            }
+        },
+        State {
+            name: "clear"
+            when: !dirty
+            PropertyChanges {
+                target: resetButton
+                enabled: false
+            }
+            PropertyChanges {
+                target: submitButton
+                enabled: false
+            }
         }
-    }
-    Connections {
-        target: submitButton
-        onClicked: {
-            submited = true
-            submited = false
-            submitClicked()
-        }
-    }
+    ]
 
     Connections {
         target: root
         onChanged: {
             submited = false
             reseted = false
+            dirty = true
         }
     }
 
-    columns: 2
+    Connections {
+        target: resetButton
+        onClicked: {
+            resetClicked()
+            reseted = true
+            submited = false
+            dirty = false
+        }
+    }
+    Connections {
+        target: submitButton
+        onClicked: {
+            submitClicked()
+            submited = false
+            reseted = false
+            dirty = false
+        }
+    }
+
+    Connections {
+        target: destinationEdit
+        onTextChanged: changed()
+    }
+
+    Connections {
+        target: trainNumberEdit
+        onTextChanged: changed()
+    }
+
+    Connections {
+        target: departureTimeEdit
+        onTextChanged: changed()
+    }
+
     RowLayout {
         width: parent.width
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -51,17 +99,21 @@ GridLayout {
             font.pointSize: 25
             font.bold: true
             text: qsTr("Введите данные поезда")
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         }
         RowLayout {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
             Button {
                 id: resetButton
-                Layout.fillWidth: true
+                Layout.minimumHeight: 44
+                Layout.minimumWidth: Layout.minimumHeight
                 text: qsTr("Сбросить")
             }
             Button {
                 id: submitButton
-                Layout.fillWidth: true
+                Layout.minimumHeight: 44
+                Layout.minimumWidth: Layout.minimumHeight
                 text: qsTr("Сохранить")
             }
         }
@@ -76,7 +128,6 @@ GridLayout {
         text: train.destination
         placeholderText: qsTr("Введите пункт назначения")
         onEditingFinished: {
-            changed()
             train.destination = text
         }
     }
@@ -89,8 +140,8 @@ GridLayout {
         text: train.trainNumber
         Layout.fillWidth: true
         placeholderText: qsTr("Введите номер поезда")
+        inputMask: ">aa-000000-aa;_"
         onEditingFinished: {
-            changed()
             train.trainNumber = text
         }
     }
@@ -102,8 +153,11 @@ GridLayout {
         text: train.departureTime
         Layout.fillWidth: true
         placeholderText: qsTr("Введите время отправления")
+        inputMask: "00:00:00;0"
+        validator: RegExpValidator {
+            regExp: /^(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$/
+        }
         onEditingFinished: {
-            changed()
             train.departureTime = text
         }
     }

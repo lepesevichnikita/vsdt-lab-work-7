@@ -12,7 +12,10 @@ GridLayout {
         target: aboutButton
         onClicked: aboutClicked()
     }
-
+    Connections {
+        target: mouseArea
+        onClicked: aboutClicked()
+    }
     width: parent.width
     rowSpacing: 2
     rows: 4
@@ -25,7 +28,7 @@ GridLayout {
             when: mouseArea.containsMouse
             PropertyChanges {
                 target: aboutButton
-                opacity: 1
+                highlighted: true
             }
         },
         State {
@@ -33,7 +36,7 @@ GridLayout {
             when: !mouseArea.containsMouse
             PropertyChanges {
                 target: aboutButton
-                opacity: 0
+                highlighted: false
             }
         }
     ]
@@ -67,7 +70,8 @@ GridLayout {
         id: aboutButton
         Layout.column: 1
         Layout.rowSpan: 4
-        Layout.fillHeight: true
+        Layout.minimumHeight: 44
+        Layout.minimumWidth: 44
         text: qsTr("Подробнее")
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
     }
