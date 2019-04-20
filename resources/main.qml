@@ -8,7 +8,7 @@ ApplicationWindow {
     visible: true
     title: swipeView.currentItem.title
     minimumWidth: 1024
-    minimumHeight: 720
+    minimumHeight: 640
 
     ObjectModel {
         id: objectModel
