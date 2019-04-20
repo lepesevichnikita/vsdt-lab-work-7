@@ -4,5 +4,9 @@
         <file>Task1.qml</file>
         <file>Task2.qml</file>
         <file>Task3.qml</file>
+        <file>Task4.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>TrainItem.qml</file>
+        <file>TrainForm.qml</file>
     </qresource>
 </RCC>

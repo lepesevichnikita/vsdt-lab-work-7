@@ -2,6 +2,7 @@ qt5_wrap_cpp(QT_CLASSES
   "${INCLUDE_DIR}/task1.h"
   "${INCLUDE_DIR}/task2.h"
   "${INCLUDE_DIR}/task3.h"
+  "${INCLUDE_DIR}/task4.h"
   )
 
 set(BIN_SOURCES
@@ -9,6 +10,7 @@ set(BIN_SOURCES
   task1.cpp
   task2.cpp
   task3.cpp
+  task4.cpp
   ${RESOURCES}
   ${QT_CLASSES}
   )
