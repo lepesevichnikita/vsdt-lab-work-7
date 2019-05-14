@@ -11,6 +11,67 @@ Page {
     antialiasing: true
     title: qsTr("Четвёртое задание")
     state: 'viewTrain'
+
+    header: GridLayout {
+        width: parent.width
+        rows: 2
+        columns: 2
+        RowLayout {
+            id: backButton
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            Button {
+                text: qsTr("Назад")
+                onClicked: stackView.pop()
+            }
+        }
+
+        RowLayout {
+            id: mainHeader
+            anchors.margins: 10
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            Button {
+                text: qsTr("Открыть файл")
+                onClicked: openFileDialog.open()
+            }
+            Button {
+                text: qsTr("Сохранить в файл")
+                onClicked: writeFileDialog.open()
+            }
+            Button {
+                id: addNewTrainButton
+                text: qsTr("Добавить новый поезд")
+                onClicked: stackView.push(newTrainForm)
+            }
+        }
+        RowLayout {
+            id: timeFilterLine
+            Layout.row: 1
+            Layout.columnSpan: 2
+            Label {
+                text: qsTr("Поезда после заданной даты")
+            }
+            TextField {
+                id: timeFilter
+                Layout.fillWidth: true
+                placeholderText: qsTr("Введите время отправления")
+                inputMask: "00:00:00"
+                //validator: RegExpValidator {
+                //    regExp: /^(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$/
+                //}
+                onEditingFinished: {
+                    trainsList.model = trains.afterTime(text)
+                }
+            }
+            Button {
+                text: qsTr("Сбросить")
+                onClicked: {
+                    timeFilter.text = ""
+                    trainsList.model = trains
+                }
+            }
+        }
+    }
+
     StackView {
         id: stackView
         initialItem: trainsList
@@ -65,35 +126,6 @@ Page {
         }
     }
 
-    header: RowLayout {
-        width: parent.width
-        RowLayout {
-            id: backButton
-            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-            Button {
-                text: qsTr("Назад")
-                onClicked: stackView.pop()
-            }
-        }
-        RowLayout {
-            id: mainHeader
-            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            Button {
-                text: qsTr("Открыть файл")
-                onClicked: openFileDialog.open()
-            }
-            Button {
-                text: qsTr("Сохранить в файл")
-                onClicked: writeFileDialog.open()
-            }
-            Button {
-                id: addNewTrainButton
-                text: qsTr("Добавить новый поезд")
-                onClicked: stackView.push(newTrainForm)
-            }
-        }
-    }
-
     TrainModel {
         id: trains
     }
@@ -141,6 +173,10 @@ Page {
             }
             PropertyChanges {
                 target: mainHeader
+                visible: false
+            }
+            PropertyChanges {
+                target: timeFilterLine
                 visible: false
             }
         }

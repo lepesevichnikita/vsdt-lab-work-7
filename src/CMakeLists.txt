@@ -32,5 +32,7 @@ target_link_libraries(${BINARY_NAME} PRIVATE Qt5::Core Qt5::Quick)
 
 
 if (ANDROID) 
+  set(ANDROID_PLATFORM 25)
+  include(${ANDROID_QT_CMAKE})
   add_qt_android_apk(${APK_NAME} ${LIBRARY_NAME})
 endif()

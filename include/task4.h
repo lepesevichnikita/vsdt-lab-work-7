@@ -11,6 +11,8 @@
 #include <fstream>
 #include <vector>
 
+#include <QTime>
+
 class Train : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString destination READ destination WRITE setDestination NOTIFY
@@ -110,8 +112,9 @@ class TrainModel : public QAbstractListModel {
   QUrl inputFilePath() const;
   QUrl outputFilePath() const;
   int count() const;
+  Q_INVOKABLE TrainModel *afterTime(const QString &);
 
- public slots:
+  public slots:
   void readTrains();
   void writeTrains();
 
@@ -126,7 +129,6 @@ class TrainModel : public QAbstractListModel {
  signals:
   void inputFilePathChanged();
   void outputFilePathChanged();
-
   void countChanged(int count);
 
  private:

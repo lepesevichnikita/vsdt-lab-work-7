@@ -74,6 +74,23 @@ void TrainModel::setOutputFilePath(const QUrl &outputFilePath) {
 
 int TrainModel::count() const { return trains_.size(); }
 
+TrainModel *TrainModel::afterTime(const QString &timeString)
+{
+    qDebug() << "фильтр времени:" << timeString;
+    const QString format = "h:m:s";
+    TrainModel *result = new TrainModel;
+    QTime time = QTime::fromString(timeString, format);
+    qDebug() << "qtime время:" << time;
+    for (QObject *obj : trains_) {
+        Train *train = qobject_cast<Train *>(obj);
+        qDebug() << "время отправления " << train->departureTime();
+        if (QTime::fromString(train->departureTime(), format) > time) {
+            result->append(obj);
+        }
+    }
+    return result;
+}
+
 void TrainModel::readTrains() {
   QFile fin(inputFilePath_.toLocalFile());
   clear();
